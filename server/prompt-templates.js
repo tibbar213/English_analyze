@@ -40,25 +40,25 @@ function wordPrompt(word) {
  * 句子分析提示模板
  */
 function sentencePrompt(sentence) {
-  return `请以JSON格式提供对英语句子"${sentence}"的详细解析，包括以下内容：
-1. 整体句子翻译（中文）
-2. 句子结构分析（简单句、复合句、长难句等）
-3. 句子成分划分（主语、谓语、宾语等）
-4. 难点词汇或短语解释
-5. 语法分析（时态、语态、从句等）
+  return `请严格按照JSON格式提供对英语句子"${sentence}"的详细解析。
+
+要求：
+1. 必须返回符合JSON规范的数据
+2. 不要包含任何额外的解释性文字
+3. 所有字符串必须使用双引号而不是单引号
 
 格式要求：
 {
-  "sentence": "原句",
+  "sentence": "${sentence}",
   "translation": "整体中文翻译",
   "structure": {
-    "type": "句子类型（如简单句/复合句等）",
+    "type": "句子类型",
     "explanation": "结构解释"
   },
   "components": [
     {
       "text": "句子片段",
-      "role": "句法角色（如主语/谓语等）",
+      "role": "句法角色",
       "explanation": "解释"
     }
   ],
@@ -71,13 +71,11 @@ function sentencePrompt(sentence) {
   ],
   "grammar": [
     {
-      "aspect": "语法点（如时态/语态等）",
+      "aspect": "语法点",
       "explanation": "详细解释"
     }
   ]
-}
-
-请确保JSON格式正确，可被直接解析。`;
+}`;
 }
 
 module.exports = {

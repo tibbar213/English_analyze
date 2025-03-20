@@ -20,27 +20,25 @@ class AIService {
         throw new Error('请先配置有效的API密钥');
       }
 
-      // 构建请求体
-      const requestBody = {
-        model: this.model,
-        messages: [
-          {
-            role: "system",
-            content: "你是一个专业的英语教师助手，擅长解析英语单词和句子。请始终以JSON格式返回响应。"
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        temperature: this.temperature,
-        max_tokens: this.maxTokens
-      };
-
-      // 发送请求
       const response = await axios.post(
         `${this.apiEndpoint}/chat/completions`,
-        requestBody,
+        {
+          model: this.model,
+          messages: [
+            {
+              role: "system",
+              content: mode === 'word' 
+                ? "你是一个专业的英语教师助手，擅长解析英语单词。请始终以JSON格式返回响应。"
+                : "你是一个专业的英语教师助手，擅长解析英语句子。请始终以JSON格式返回响应，不要包含任何额外的文字说明。"
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          temperature: this.temperature,
+          max_tokens: this.maxTokens
+        },
         {
           headers: {
             'Content-Type': 'application/json',
@@ -49,37 +47,54 @@ class AIService {
         }
       );
 
-      // 检查响应
-      if (!response.data || !response.data.choices || !response.data.choices[0]) {
+      if (!response.data?.choices?.[0]?.message?.content) {
         throw new Error('API返回的数据格式不完整');
       }
 
-      const content = response.data.choices[0].message.content;
+      let content = response.data.choices[0].message.content.trim();
       
-      // 尝试解析JSON
+      // 清理可能的非JSON内容
       try {
-        // 清理可能的前后缀文本，只保留JSON部分
-        const jsonStr = content.trim().replace(/```json\n?|\n?```/g, '');
-        const result = JSON.parse(jsonStr);
+        // 尝试找到JSON的开始和结束位置
+        const jsonStart = content.indexOf('{');
+        const jsonEnd = content.lastIndexOf('}');
+        
+        if (jsonStart === -1 || jsonEnd === -1) {
+          throw new Error('返回内容中未找到有效的JSON结构');
+        }
+        
+        // 提取JSON部分
+        content = content.slice(jsonStart, jsonEnd + 1);
+        
+        // 清理可能的markdown代码块标记
+        content = content.replace(/```json\s*|```\s*/g, '');
+        
+        // 尝试解析JSON
+        const result = JSON.parse(content);
+        
+        // 验证必要的字段
+        if (mode === 'sentence') {
+          if (!result.sentence || !result.translation || !result.structure) {
+            throw new Error('返回的JSON缺少必要字段');
+          }
+        }
+        
         return result;
       } catch (parseError) {
-        console.error('JSON解析失败，原始内容:', content);
-        throw new Error('AI返回的数据格式不是有效的JSON');
+        console.error('原始返回内容:', content);
+        console.error('JSON解析错误:', parseError);
+        throw new Error(`AI返回的数据格式无效: ${parseError.message}`);
       }
 
     } catch (error) {
       if (error.response) {
-        // API错误响应
         const message = error.response.data.error?.message || '未知API错误';
-        console.error('API错误:', error.response.status, message);
+        console.error('API错误详情:', error.response.data);
         throw new Error(`API调用失败: ${message}`);
       } else if (error.request) {
-        // 网络错误
-        console.error('网络错误:', error.message);
+        console.error('网络请求错误:', error.message);
         throw new Error('网络连接失败，请检查网络设置');
       }
-      // 其他错误
-      console.error('AI服务错误:', error);
       throw error;
     }
   }
