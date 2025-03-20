@@ -1,0 +1,315 @@
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --accent-color: #f72585;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  --success-color: #4cc9f0;
+  --border-radius: 0.5rem;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fb;
+  color: var(--dark-color);
+  line-height: 1.6;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--box-shadow);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+/* 单词卡片样式 */
+.word-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom right, #ffffff, #f9f9f9);
+  margin-bottom: 2rem;
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.word-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* 卡片标题/单词 */
+.word-card .card-header {
+  background: linear-gradient(135deg, #4361ee, #3a0ca3);
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+}
+
+/* 音标区域 */
+.word-card .phonetics {
+  background-color: #f0f5ff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  border-bottom: 1px solid #e0e7ff;
+  font-size: 1.1rem;
+}
+
+.word-card .phonetics span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.word-card .phonetics span:before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.word-card .phonetics span:first-child:before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234361ee'%3E%3Cpath d='M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm0 20a1 1 0 0 0 1-1v-3a1 1 0 0 0-2 0v3a1 1 0 0 0 1 1zm-8-5a1 1 0 0 0 0 2 6 6 0 0 0 6-6v-2a1 1 0 0 0-2 0v2a4 4 0 0 1-4 4zm16 0a4 4 0 0 1-4-4v-2a1 1 0 0 0-2 0v2a6 6 0 0 0 6 6 1 1 0 0 0 0-2z'/%3E%3C/svg%3E");
+}
+
+.word-card .phonetics span:last-child:before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234361ee'%3E%3Cpath d='M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm0 20a1 1 0 0 0 1-1v-3a1 1 0 0 0-2 0v3a1 1 0 0 0 1 1zm-8-5a1 1 0 0 0 0 2 6 6 0 0 0 6-6v-2a1 1 0 0 0-2 0v2a4 4 0 0 1-4 4zm16 0a4 4 0 0 1-4-4v-2a1 1 0 0 0-2 0v2a6 6 0 0 0 6 6 1 1 0 0 0 0-2z'/%3E%3C/svg%3E");
+}
+
+/* 卡片主体内容 */
+.word-card .card-body {
+  padding: 1.5rem;
+}
+
+/* 内容区域标题 */
+.word-card .card-title {
+  color: #3a0ca3;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e0e7ff;
+  position: relative;
+}
+
+.word-card .card-title:first-child {
+  margin-top: 0;
+}
+
+.word-card .card-title:after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background-color: #4361ee;
+}
+
+/* 定义列表 */
+.word-card .definition-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.word-card .definition-item {
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.word-card .part-of-speech {
+  display: inline-block;
+  background-color: #4361ee;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* 常见用法 */
+.word-card .usages {
+  background-color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.word-card .usages ul {
+  padding-left: 1.5rem;
+  margin-bottom: 0;
+}
+
+.word-card .usages ul li {
+  margin-bottom: 0.5rem;
+}
+
+.word-card .usages ul li:last-child {
+  margin-bottom: 0;
+}
+
+/* 例句 */
+.word-card .example {
+  background-color: white;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #4cc9f0;
+}
+
+.word-card .example:last-child {
+  margin-bottom: 0;
+}
+
+.word-card .example .english {
+  font-style: italic;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.word-card .example .translation {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* 词源与记忆技巧 */
+.word-card .etymology,
+.word-card .tips {
+  background-color: white;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.word-card .etymology {
+  background-color: #f6f8ff;
+  border-left: 4px solid #3a0ca3;
+}
+
+.word-card .tips {
+  background-color: #e0f7fa;
+  border-left: 4px solid #4cc9f0;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .word-card .phonetics {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
+
+/* 句子分析样式 */
+.sentence-analysis {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 2rem;
+}
+
+.sentence-analysis .original-sentence {
+  font-size: 1.25rem;
+  font-weight: 500;
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.sentence-analysis .translation {
+  padding: 1rem;
+  background-color: #edf2fb;
+  font-style: italic;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.sentence-analysis .structure {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.sentence-analysis .component {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background-color: #f8f9fa;
+  border-left: 3px solid var(--primary-color);
+}
+
+.sentence-analysis .component .role {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.sentence-analysis .key-phrase {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background-color: #fff8e1;
+  border-radius: 0.25rem;
+}
+
+.sentence-analysis .key-phrase .phrase {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.sentence-analysis .grammar-point {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background-color: #e8f5e9;
+  border-left: 3px solid #4caf50;
+}
+
+.sentence-analysis .grammar-point .aspect {
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .card-header, .card-body {
+    padding: 0.75rem;
+  }
+  
+  .word-card .phonetics span {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+} 
