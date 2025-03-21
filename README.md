@@ -49,7 +49,7 @@ cd English_analyze
 npm install
 ```
 
-3. 配置环境
+3. 配置API
 - 编辑 `config/default.json`，填入您的 OpenAI API 端点、密钥等配置
 
 4. 启动应用
@@ -60,9 +60,6 @@ npm start
 5. 访问应用
 打开浏览器访问 `http://localhost:8080`
 
-
-## ⚙️ 配置说明
-在 `config/default.json` 中配置OpenAI格式api、key、模型名称等
 
 ## 📖 使用说明
 
