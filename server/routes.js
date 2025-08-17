@@ -1,77 +1,49 @@
 const express = require('express');
 const aiService = require('./ai-service');
-const config = require('config');
-const fs = require('fs');
-const path = require('path');
-
 const router = express.Router();
 
-// 获取系统配置
-router.get('/config', (req, res) => {
-  try {
-    const aiConfig = {
-      apiEndpoint: config.get('ai.apiEndpoint'),
-      model: config.get('ai.model'),
-      temperature: config.get('ai.temperature'),
-      maxTokens: config.get('ai.maxTokens')
-    };
-    res.json(aiConfig);
-  } catch (error) {
-    res.status(500).json({ error: '无法获取配置信息' });
-  }
-});
-
-// 更新系统配置
-router.post('/config', (req, res) => {
-  try {
-    const newConfig = {
-      server: { port: config.get('server.port') },
-      ai: {
-        apiEndpoint: req.body.apiEndpoint,
-        apiKey: req.body.apiKey,
-        model: req.body.model,
-        temperature: parseFloat(req.body.temperature),
-        maxTokens: parseInt(req.body.maxTokens)
-      }
-    };
-    
-    // 确保配置目录存在
-    const configDir = path.join(__dirname, '../config');
-    if (!fs.existsSync(configDir)) {
-      fs.mkdirSync(configDir, { recursive: true });
-    }
-    
-    fs.writeFileSync(
-      path.join(configDir, 'default.json'),
-      JSON.stringify(newConfig, null, 2)
-    );
-    
-    res.json({ success: true, message: '配置已更新' });
-  } catch (error) {
-    console.error('保存配置失败:', error);
-    res.status(500).json({ error: '更新配置失败：' + error.message });
-  }
-});
-
-// 分析文本
+// 分析文本接口
 router.post('/analyze', async (req, res) => {
   try {
     const { text, mode } = req.body;
-    
-    if (!text) {
-      return res.status(400).json({ error: '请提供文本内容' });
+
+    // 输入验证
+    if (!text || !text.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: '请输入要分析的文本'
+      });
     }
-    
-    if (!['word', 'sentence'].includes(mode)) {
-      return res.status(400).json({ error: '无效的分析模式' });
+
+    if (!mode || !['word', 'sentence'].includes(mode)) {
+      return res.status(400).json({
+        success: false,
+        error: '请选择正确的分析模式（word 或 sentence）'
+      });
     }
-    
-    const result = await aiService.analyzeText(text, mode);
-    res.json({ result }); // 直接返回解析后的结果
+
+    // 调用AI服务
+    const result = await aiService.analyzeText(text.trim(), mode);
+
+    res.json(result);
+
   } catch (error) {
-    console.error('分析失败:', error);
-    res.status(500).json({ error: error.message });
+    console.error('分析错误:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || '分析过程中发生错误'
+    });
   }
 });
 
-module.exports = router; 
+// 健康检查接口
+router.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'AI英语分析服务运行正常',
+    timestamp: new Date().toISOString(),
+    version: '2.0.0'
+  });
+});
+
+module.exports = router;

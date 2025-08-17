@@ -1,27 +1,35 @@
 {
-  "name": "english-analyze",
+  "name": "ai-english-analyzer",
   "version": "1.0.0",
-  "description": "英语分析助手，帮助用户解析单词和长难句",
+  "description": "AI驱动的英语分析程序 - 支持单词和句子分析，使用Markdown格式输出",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "install-deps": "pnpm install"
   },
   "keywords": [
     "english",
-    "assistant",
     "ai",
+    "analysis",
+    "markdown",
     "learning"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.2",
-    "config": "^3.3.9",
+    "dompurify": "^3.0.7",
+    "dotenv": "^16.6.1",
     "express": "^4.18.2",
-    "openai": "^4.20.0"
+    "jsdom": "^23.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
-  }
-} 
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.1"
+}

@@ -1,51 +1,255 @@
+/* AI英语分析程序 - 简洁现代设计 */
+
+/* CSS变量定义 */
 :root {
-  --primary-color: #4361ee;
-  --secondary-color: #3f37c9;
-  --accent-color: #f72585;
-  --light-color: #f8f9fa;
-  --dark-color: #212529;
-  --success-color: #4cc9f0;
-  --border-radius: 0.5rem;
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --transition: all 0.3s ease;
+  /* 主色调 - 青绿色系 */
+  --primary: #4D8078;
+  --primary-light: #5A9B92;
+  --primary-dark: #3D6B63;
+  --primary-bg: #f0f9f7;
+
+  /* 中性色 */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* 背景色 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8faf9;
+  --bg-tertiary: #f1f5f4;
+
+  /* 文字色 */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+
+  /* 边框 */
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+
+  /* 阴影 */
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* 圆角 */
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+}
+
+/* 重置样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f7fb;
-  color: var(--dark-color);
-  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  -webkit-font-smoothing: antialiased;
 }
 
-header {
+/* 应用布局 */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 导航栏 */
+.navbar {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+}
+
+.nav-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.brand-icon {
+  font-size: 1.5rem;
+}
+
+.brand-text {
+  font-size: 1.125rem;
+}
+
+
+
+/* 主内容区 */
+.main-content {
+  flex: 1;
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* 输入区域 */
+.input-section {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow);
   margin-bottom: 2rem;
 }
 
-.card {
+.input-container {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.text-input {
+  flex: 1;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(77, 128, 120, 0.1);
+}
+
+.text-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.analyze-btn {
+  padding: 0.875rem 1.25rem;
+  background: var(--primary);
+  color: white;
   border: none;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.card:hover {
-  box-shadow: var(--box-shadow);
+.analyze-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
 }
 
-.btn-primary {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
+.analyze-btn:active {
+  transform: translateY(0);
 }
 
-.btn-primary:hover {
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
+/* 模式选择器 */
+.mode-selector {
+  display: flex;
+  gap: 1rem;
 }
 
-/* 单词卡片样式 */
+.mode-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.mode-option input[type="radio"] {
+  display: none;
+}
+
+.mode-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.mode-option input[type="radio"]:checked + .mode-label {
+  background: var(--primary-bg);
+  color: var(--primary-dark);
+}
+
+.mode-label:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 加载状态 */
+.loading-state {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--text-secondary);
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border);
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 结果区域 */
+.result-section {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.analysis-content {
+  margin-top: 1rem;
+}
+
+/* 单词卡片样式 - 完全参考exampleproject */
 .word-card {
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(77, 128, 120, 0.1);
   background: linear-gradient(to bottom right, #ffffff, #f9f9f9);
   margin-bottom: 2rem;
   border: none;
@@ -54,12 +258,12 @@ header {
 
 .word-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 15px 35px rgba(77, 128, 120, 0.15);
 }
 
 /* 卡片标题/单词 */
 .word-card .card-header {
-  background: linear-gradient(135deg, #4361ee, #3a0ca3);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   font-size: 2rem;
   font-weight: 700;
@@ -72,37 +276,19 @@ header {
 
 /* 音标区域 */
 .word-card .phonetics {
-  background-color: #f0f5ff;
+  background-color: var(--primary-bg);
   padding: 1rem 1.5rem;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 2rem;
-  border-bottom: 1px solid #e0e7ff;
+  border-bottom: 1px solid var(--border);
   font-size: 1.1rem;
 }
 
 .word-card .phonetics span {
   display: inline-flex;
   align-items: center;
-}
-
-.word-card .phonetics span:before {
-  content: '';
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-.word-card .phonetics span:first-child:before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234361ee'%3E%3Cpath d='M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm0 20a1 1 0 0 0 1-1v-3a1 1 0 0 0-2 0v3a1 1 0 0 0 1 1zm-8-5a1 1 0 0 0 0 2 6 6 0 0 0 6-6v-2a1 1 0 0 0-2 0v2a4 4 0 0 1-4 4zm16 0a4 4 0 0 1-4-4v-2a1 1 0 0 0-2 0v2a6 6 0 0 0 6 6 1 1 0 0 0 0-2z'/%3E%3C/svg%3E");
-}
-
-.word-card .phonetics span:last-child:before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234361ee'%3E%3Cpath d='M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm0 20a1 1 0 0 0 1-1v-3a1 1 0 0 0-2 0v3a1 1 0 0 0 1 1zm-8-5a1 1 0 0 0 0 2 6 6 0 0 0 6-6v-2a1 1 0 0 0-2 0v2a4 4 0 0 1-4 4zm16 0a4 4 0 0 1-4-4v-2a1 1 0 0 0-2 0v2a6 6 0 0 0 6 6 1 1 0 0 0 0-2z'/%3E%3C/svg%3E");
 }
 
 /* 卡片主体内容 */
@@ -112,12 +298,12 @@ header {
 
 /* 内容区域标题 */
 .word-card .card-title {
-  color: #3a0ca3;
+  color: var(--primary-dark);
   font-weight: 600;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e0e7ff;
+  border-bottom: 2px solid var(--border);
   position: relative;
 }
 
@@ -132,7 +318,7 @@ header {
   left: 0;
   width: 80px;
   height: 2px;
-  background-color: #4361ee;
+  background-color: var(--primary);
 }
 
 /* 定义列表 */
@@ -147,12 +333,13 @@ header {
   padding: 1rem;
   margin-bottom: 0.75rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+  border-left: 4px solid var(--primary-light);
 }
 
 .word-card .part-of-speech {
   display: inline-block;
-  background-color: #4361ee;
+  background-color: var(--primary);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 50px;
@@ -161,12 +348,494 @@ header {
   font-size: 0.85rem;
 }
 
+.word-card .meaning {
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
 /* 常见用法 */
 .word-card .usages {
   background-color: white;
   padding: 1rem 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+}
+
+.word-card .usages ul {
+  padding-left: 1.5rem;
+  margin-bottom: 0;
+}
+
+.word-card .usages ul li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.word-card .usages ul li:last-child {
+  margin-bottom: 0;
+}
+
+/* 例句 */
+.word-card .example {
+  background-color: white;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+  border-left: 4px solid var(--primary-light);
+}
+
+.word-card .example:last-child {
+  margin-bottom: 0;
+}
+
+.word-card .example .english {
+  font-style: italic;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.word-card .example .translation {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* 词源与记忆技巧 */
+.word-card .etymology,
+.word-card .tips {
+  background-color: white;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+}
+
+.word-card .etymology {
+  background-color: var(--primary-bg);
+  border-left: 4px solid var(--primary-dark);
+}
+
+.word-card .tips {
+  background-color: #e8f4f2;
+  border-left: 4px solid var(--primary-light);
+}
+
+.word-card .etymology p,
+.word-card .tips p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+/* 句子分析样式 - 参考exampleproject */
+.sentence-analysis {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(77, 128, 120, 0.1);
+  background: linear-gradient(to bottom right, #ffffff, #f9f9f9);
+  margin-bottom: 2rem;
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sentence-analysis:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(77, 128, 120, 0.15);
+}
+
+/* 原句显示 */
+.sentence-analysis .original-sentence {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* 翻译 */
+.sentence-analysis .translation {
+  background-color: var(--primary-bg);
+  padding: 1rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* 区域标题 */
+.sentence-analysis .section-title {
+  color: var(--primary-dark);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  position: relative;
+}
+
+.sentence-analysis .section-title:after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background-color: var(--primary);
+}
+
+/* 结构分析 */
+.sentence-analysis .structure {
+  padding: 1.5rem;
+  background-color: white;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.sentence-analysis .structure-type {
+  background-color: var(--primary-bg);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--primary);
+}
+
+.sentence-analysis .structure-explanation {
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* 句子成分 */
+.sentence-analysis .components {
+  background-color: white;
+  border-bottom: 1px solid var(--border-light);
+  padding: 1.5rem;
+}
+
+.sentence-analysis .component {
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+  border-left: 4px solid var(--primary-light);
+}
+
+.sentence-analysis .component:last-child {
+  margin-bottom: 0;
+}
+
+.sentence-analysis .component .role {
+  display: inline-block;
+  background-color: var(--primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.sentence-analysis .component .text {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.sentence-analysis .component .explanation {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* 关键短语 */
+.sentence-analysis .key-phrases {
+  background-color: white;
+  border-bottom: 1px solid var(--border-light);
+  padding: 1.5rem;
+}
+
+.sentence-analysis .key-phrase {
+  background-color: white;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+  border-left: 4px solid var(--primary-light);
+}
+
+.sentence-analysis .key-phrase:last-child {
+  margin-bottom: 0;
+}
+
+.sentence-analysis .key-phrase .phrase {
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+}
+
+.sentence-analysis .key-phrase .meaning,
+.sentence-analysis .key-phrase .usage {
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.sentence-analysis .key-phrase .meaning:last-child,
+.sentence-analysis .key-phrase .usage:last-child {
+  margin-bottom: 0;
+}
+
+/* 语法分析 */
+.sentence-analysis .grammar-points {
+  background-color: white;
+  padding: 1.5rem;
+}
+
+.sentence-analysis .grammar-point {
+  background-color: var(--primary-bg);
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+  border-left: 4px solid var(--primary-dark);
+}
+
+.sentence-analysis .grammar-point:last-child {
+  margin-bottom: 0;
+}
+
+.sentence-analysis .grammar-point .aspect {
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 0.75rem;
+  font-size: 1.05rem;
+}
+
+.sentence-analysis .grammar-point .explanation {
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 动画效果 */
+.word-card,
+.sentence-analysis {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.word-card .definition-item,
+.word-card .example,
+.sentence-analysis .component,
+.sentence-analysis .key-phrase,
+.sentence-analysis .grammar-point {
+  animation: slideInLeft 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+.word-card .definition-item:nth-child(1),
+.word-card .example:nth-child(1),
+.sentence-analysis .component:nth-child(1),
+.sentence-analysis .key-phrase:nth-child(1),
+.sentence-analysis .grammar-point:nth-child(1) { animation-delay: 0.1s; }
+
+.word-card .definition-item:nth-child(2),
+.word-card .example:nth-child(2),
+.sentence-analysis .component:nth-child(2),
+.sentence-analysis .key-phrase:nth-child(2),
+.sentence-analysis .grammar-point:nth-child(2) { animation-delay: 0.2s; }
+
+.word-card .definition-item:nth-child(3),
+.word-card .example:nth-child(3),
+.sentence-analysis .component:nth-child(3),
+.sentence-analysis .key-phrase:nth-child(3),
+.sentence-analysis .grammar-point:nth-child(3) { animation-delay: 0.3s; }
+
+/* 动画定义 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .word-card .card-header,
+  .sentence-analysis .original-sentence {
+    font-size: 1.5rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .word-card .phonetics {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .word-card .card-body,
+  .sentence-analysis .structure,
+  .sentence-analysis .components,
+  .sentence-analysis .key-phrases,
+  .sentence-analysis .grammar-points {
+    padding: 1rem;
+  }
+
+  .word-card .definition-item,
+  .word-card .example,
+  .sentence-analysis .component,
+  .sentence-analysis .key-phrase,
+  .sentence-analysis .grammar-point {
+    padding: 0.875rem;
+    animation: none; /* 移动端禁用复杂动画 */
+  }
+
+  .word-card .card-title:after,
+  .sentence-analysis .section-title:after {
+    width: 60px;
+  }
+}
+
+.analysis-content {
+  margin-top: 1rem;
+}
+
+/* 单词卡片样式 - 参考exampleproject */
+.word-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(77, 128, 120, 0.1);
+  background: linear-gradient(to bottom right, #ffffff, #f9f9f9);
+  margin-bottom: 2rem;
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.word-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(77, 128, 120, 0.15);
+}
+
+/* 卡片标题/单词 */
+.word-card .card-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border: none;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+}
+
+/* 音标区域 */
+.word-card .phonetics {
+  background-color: var(--primary-bg);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.1rem;
+}
+
+.word-card .phonetics span {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 卡片主体内容 */
+.word-card .card-body {
+  padding: 1.5rem;
+}
+
+/* 内容区域标题 */
+.word-card .card-title {
+  color: var(--primary-dark);
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  position: relative;
+}
+
+.word-card .card-title:first-child {
+  margin-top: 0;
+}
+
+.word-card .card-title:after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background-color: var(--primary);
+}
+
+/* 定义列表 */
+.word-card .definition-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.word-card .definition-item {
+  background-color: white;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+}
+
+.word-card .part-of-speech {
+  display: inline-block;
+  background-color: var(--primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.word-card .meaning {
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+/* 常见用法 */
+.word-card .usages {
+  background-color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
 }
 
 .word-card .usages ul {
@@ -188,8 +857,8 @@ header {
   padding: 1rem 1.25rem;
   margin-bottom: 0.75rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid #4cc9f0;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
+  border-left: 4px solid var(--primary-light);
 }
 
 .word-card .example:last-child {
@@ -198,12 +867,13 @@ header {
 
 .word-card .example .english {
   font-style: italic;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 .word-card .example .translation {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
 }
 
@@ -214,102 +884,593 @@ header {
   padding: 1.25rem;
   margin-top: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.05);
 }
 
 .word-card .etymology {
-  background-color: #f6f8ff;
-  border-left: 4px solid #3a0ca3;
+  background-color: var(--primary-bg);
+  border-left: 4px solid var(--primary-dark);
 }
 
 .word-card .tips {
-  background-color: #e0f7fa;
-  border-left: 4px solid #4cc9f0;
+  background-color: #e8f4f2;
+  border-left: 4px solid var(--primary-light);
 }
 
-/* 响应式调整 */
-@media (max-width: 768px) {
-  .word-card .phonetics {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
+/* 隐藏类 */
+.d-none {
+  display: none !important;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.justify-content-between {
+  justify-content: space-between !important;
+}
+
+.ms-auto {
+  margin-left: auto !important;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.mb-5 {
+  margin-bottom: 2rem !important;
+}
+
+.py-5 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+/* 结果区域样式 */
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.result-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.action-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+}
+
+.action-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--primary);
+}
+
+
+
+
+
+/* 导出时的打印样式优化 */
+@media print {
+  .result-header {
+    display: none !important;
+  }
+
+  .export-mode {
+    background: white !important;
+    color: black !important;
+  }
+
+  .export-mode * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 
-/* 句子分析样式 */
-.sentence-analysis {
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  margin-bottom: 2rem;
+/* 错误消息样式 */
+.error-message {
+  text-align: center;
+  padding: 2rem;
 }
 
-.sentence-analysis .original-sentence {
-  font-size: 1.25rem;
-  font-weight: 500;
-  padding: 1rem;
-  border-bottom: 1px solid #dee2e6;
-  background-color: var(--primary-color);
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.error-message h3 {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+}
+
+.error-message p {
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.retry-btn {
+  background: var(--primary);
   color: white;
-  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.sentence-analysis .translation {
+.retry-btn:hover {
+  background: var(--primary-dark);
+}
+
+/* 工具类 */
+.d-none {
+  display: none !important;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.justify-content-between {
+  justify-content: space-between !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+
+
+
+
+/* Markdown渲染样式 - 参考exampleproject优化 */
+.markdown-content {
+  line-height: 1.7;
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 主标题样式 - 单词分析 */
+.markdown-content h1 {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  margin: 0 -2rem 2rem -2rem;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+/* 二级标题样式 */
+.markdown-content h2 {
+  color: var(--primary-dark);
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  position: relative;
+}
+
+.markdown-content h2:after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background-color: var(--primary);
+}
+
+/* 三级标题样式 */
+.markdown-content h3 {
+  color: var(--primary);
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+}
+
+/* 表格样式 - 优化设计 */
+.table-wrapper {
+  margin: 1.5rem 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(77, 128, 120, 0.1);
+  background: white;
+}
+
+.markdown-content table,
+.enhanced-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  background: white;
+}
+
+.markdown-content th {
+  background: linear-gradient(135deg, var(--primary-bg), #e8f4f2);
+  color: var(--primary-dark);
+  font-weight: 600;
   padding: 1rem;
-  background-color: #edf2fb;
+  text-align: left;
+  border-bottom: 2px solid var(--primary);
+  font-size: 0.95rem;
+}
+
+.markdown-content td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  background: white;
+  transition: background-color 0.2s ease;
+}
+
+.markdown-content tr:hover td {
+  background-color: var(--bg-secondary);
+}
+
+/* 引用块样式 - 音标区域等 */
+.markdown-content blockquote {
+  background: linear-gradient(135deg, var(--primary-bg), #f0f9f7);
+  border-left: 4px solid var(--primary);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.08);
+  position: relative;
+}
+
+.markdown-content blockquote:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+}
+
+.markdown-content blockquote p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.markdown-content blockquote strong {
+  color: var(--primary-dark);
+}
+
+/* 列表样式优化 */
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.markdown-content li {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.markdown-content li:last-child {
+  margin-bottom: 0;
+}
+
+/* 强调文本 */
+.markdown-content strong {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.markdown-content em {
+  color: var(--text-secondary);
   font-style: italic;
-  border-bottom: 1px solid #dee2e6;
 }
 
-.sentence-analysis .structure {
-  padding: 1rem;
-  border-bottom: 1px solid #dee2e6;
+/* 代码样式 */
+.markdown-content code {
+  background: var(--bg-tertiary);
+  color: var(--primary-dark);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+  font-weight: 500;
 }
 
-.sentence-analysis .component {
+/* 分隔线 */
+.markdown-content hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--primary), transparent);
+  margin: 2rem 0;
+  border-radius: 1px;
+}
+
+/* 特殊内容样式 - 针对AI分析结果 */
+
+/* 例句样式 */
+.markdown-content h3:has(+ blockquote),
+.markdown-content h3 + blockquote {
+  background: white;
+  border-left: 4px solid var(--primary-light);
+  box-shadow: 0 2px 8px rgba(77, 128, 120, 0.1);
+  margin: 1rem 0;
+}
+
+/* 词源和记忆技巧样式 */
+.markdown-content h2:contains("词源"),
+.markdown-content h2:contains("记忆") {
+  color: var(--primary);
+}
+
+/* 基本信息表格特殊样式 */
+.markdown-content table:first-of-type {
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
+  border: 1px solid var(--border-light);
+}
+
+.markdown-content table:first-of-type th {
+  background: var(--primary-bg);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* 列表项特殊样式 - 用法和搭配 */
+.markdown-content ul li {
+  background: white;
   padding: 0.75rem 1rem;
-  margin: 0.5rem 0;
-  background-color: #f8f9fa;
-  border-left: 3px solid var(--primary-color);
+  margin-bottom: 0.5rem;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(77, 128, 120, 0.08);
+  border-left: 3px solid var(--primary-light);
+  transition: all 0.2s ease;
 }
 
-.sentence-analysis .component .role {
-  font-weight: bold;
-  color: var(--primary-color);
+.markdown-content ul li:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 6px rgba(77, 128, 120, 0.12);
 }
 
-.sentence-analysis .key-phrase {
+/* 词性标签样式 */
+.markdown-content td:first-child {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: center;
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  margin-right: 0.5rem;
+  display: inline-block;
+  min-width: 60px;
+}
+
+/* 例句区域特殊样式 */
+.markdown-content blockquote blockquote {
+  background: white;
+  border-left: 4px solid var(--primary-light);
   margin: 0.75rem 0;
-  padding: 0.75rem;
-  background-color: #fff8e1;
-  border-radius: 0.25rem;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(77, 128, 120, 0.08);
 }
 
-.sentence-analysis .key-phrase .phrase {
-  font-weight: bold;
-  color: var(--accent-color);
+.markdown-content blockquote blockquote p:first-child {
+  font-style: italic;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
-.sentence-analysis .grammar-point {
+.markdown-content blockquote blockquote p:last-child {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* 提示信息样式 */
+.markdown-content p:contains("💡") {
+  background: linear-gradient(135deg, #e8f4f2, #f0f9f7);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--primary-light);
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+/* JavaScript增强样式类 */
+.enhanced-table {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.info-table {
+  background: linear-gradient(135deg, #ffffff, #f8faf9);
+  border: 2px solid var(--primary-bg);
+}
+
+.enhanced-list-item {
+  animation: slideInLeft 0.4s ease-out;
+  animation-fill-mode: both;
+}
+
+.enhanced-list-item:nth-child(1) { animation-delay: 0.1s; }
+.enhanced-list-item:nth-child(2) { animation-delay: 0.2s; }
+.enhanced-list-item:nth-child(3) { animation-delay: 0.3s; }
+.enhanced-list-item:nth-child(4) { animation-delay: 0.4s; }
+.enhanced-list-item:nth-child(5) { animation-delay: 0.5s; }
+
+.enhanced-quote {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.example-quote {
+  background: linear-gradient(135deg, #ffffff, #f0f9f7);
+  border-left: 4px solid var(--primary-light);
+  position: relative;
+}
+
+.example-quote:before {
+  content: '💬';
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.special-section {
+  background: linear-gradient(135deg, var(--primary-bg), #e8f4f2);
   padding: 0.75rem 1rem;
-  margin: 0.5rem 0;
-  background-color: #e8f5e9;
-  border-left: 3px solid #4caf50;
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--primary);
 }
 
-.sentence-analysis .grammar-point .aspect {
-  font-weight: bold;
-  color: #2e7d32;
+.fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* 动画定义 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .markdown-content h1 {
+    font-size: 1.5rem;
+    margin: 0 -1.5rem 1.5rem -1.5rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .markdown-content table {
+    font-size: 0.875rem;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .markdown-content blockquote {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .markdown-content ul li {
+    padding: 0.625rem 0.875rem;
+  }
+
+  .enhanced-list-item {
+    animation: none; /* 移动端禁用复杂动画 */
+  }
+
+  /* 移动端导出按钮优化 */
+  .result-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .download-group,
+  .action-group {
+    justify-content: center;
+  }
+
+  .download-btn {
+    flex: 1;
+    justify-content: center;
+  }
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .card-header, .card-body {
-    padding: 0.75rem;
+  .container {
+    padding: 0 1rem;
   }
-  
-  .word-card .phonetics span {
-    display: block;
-    margin-bottom: 0.25rem;
+
+  .nav-content {
+    padding: 1rem;
   }
-} 
+
+  .input-section {
+    padding: 1.5rem;
+  }
+
+  .input-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .analyze-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .mode-selector {
+    justify-content: center;
+  }
+
+
+}

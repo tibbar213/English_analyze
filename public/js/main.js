@@ -1,180 +1,127 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // 获取DOM元素
-  const textInput = document.getElementById('textInput');
-  const analyzeBtn = document.getElementById('analyzeBtn');
-  const wordMode = document.getElementById('wordMode');
-  const loadingIndicator = document.getElementById('loadingIndicator');
-  const resultContainer = document.getElementById('resultContainer');
-  const settingsForm = document.getElementById('settingsForm');
-  const saveSettingsBtn = document.getElementById('saveSettings');
+// AI英语分析程序 - 主要JavaScript文件
 
-  // 加载配置
-  loadConfig();
-
-  // 绑定事件监听器
-  analyzeBtn.addEventListener('click', analyze);
-  textInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') analyze();
-  });
-  saveSettingsBtn.addEventListener('click', saveConfig);
-
-  // 加载配置
-  async function loadConfig() {
-    try {
-      const response = await fetch('/api/config');
-      if (!response.ok) throw new Error('获取配置失败');
-      
-      const config = await response.json();
-      
-      // 填充表单
-      document.getElementById('apiEndpoint').value = config.apiEndpoint || '';
-      document.getElementById('model').value = config.model || '';
-      document.getElementById('temperature').value = config.temperature || 0.7;
-      document.getElementById('maxTokens').value = config.maxTokens || 1000;
-    } catch (error) {
-      showToast('加载配置失败: ' + error.message, 'error');
-    }
+class EnglishAnalyzer {
+  constructor() {
+    this.initializeElements();
+    this.bindEvents();
   }
 
-  // 保存配置
-  async function saveConfig() {
-    try {
-      const config = {
-        apiEndpoint: document.getElementById('apiEndpoint').value,
-        apiKey: document.getElementById('apiKey').value,
-        model: document.getElementById('model').value,
-        temperature: parseFloat(document.getElementById('temperature').value),
-        maxTokens: parseInt(document.getElementById('maxTokens').value)
-      };
-
-      const response = await fetch('/api/config', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(config)
-      });
-
-      if (!response.ok) throw new Error('保存配置失败');
-      
-      const result = await response.json();
-      showToast(result.message, 'success');
-      
-      // 关闭模态框
-      const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
-      modal.hide();
-    } catch (error) {
-      showToast('保存配置失败: ' + error.message, 'error');
-    }
+  initializeElements() {
+    this.textInput = document.getElementById('textInput');
+    this.analyzeBtn = document.getElementById('analyzeBtn');
+    this.loadingIndicator = document.getElementById('loadingIndicator');
+    this.resultContainer = document.getElementById('resultContainer');
   }
 
-  // 执行分析
-  async function analyze() {
-    const text = textInput.value.trim();
+  bindEvents() {
+    // 分析按钮点击事件
+    this.analyzeBtn.addEventListener('click', () => this.analyzeText());
+
+    // 输入框回车事件
+    this.textInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.analyzeText();
+      }
+    });
+  }
+
+  async analyzeText() {
+    const text = this.textInput.value.trim();
     if (!text) {
-      showToast('请输入要分析的内容', 'warning');
+      this.showError('请输入要分析的文本');
       return;
     }
 
-    const mode = wordMode.checked ? 'word' : 'sentence';
+    const mode = document.querySelector('input[name="analysisMode"]:checked').value;
     
-    // 显示加载指示器
-    loadingIndicator.classList.remove('d-none');
-    resultContainer.classList.add('d-none');
-
     try {
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ text, mode })
+      this.showLoading();
+      
+      const response = await axios.post('/api/analyze', {
+        text: text,
+        mode: mode
       });
 
-      if (!response.ok) throw new Error('分析请求失败');
-      
-      const data = await response.json();
-      
-      if (mode === 'word') {
-        renderWordResult(data.result);
+      if (response.data.success) {
+        this.showResult(response.data.content, mode);
       } else {
-        renderSentenceResult(data.result);
+        this.showError(response.data.error || '分析失败');
       }
-
-      resultContainer.classList.remove('d-none');
-      resultContainer.scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
-      showToast('分析失败: ' + error.message, 'error');
+      console.error('分析错误:', error);
+      if (error.response?.data?.error) {
+        this.showError(error.response.data.error);
+      } else {
+        this.showError('网络错误，请检查连接');
+      }
     } finally {
-      loadingIndicator.classList.add('d-none');
+      this.hideLoading();
     }
   }
 
-  // 渲染单词分析结果
-  function renderWordResult(result) {
-    const html = `
-      <div class="word-card animate__animated animate__fadeIn">
-        <div class="card-header">
-          ${result.word}
-        </div>
-        <div class="phonetics">
-          <span><strong>英式发音:</strong> ${result.phonetics.uk}</span>
-          <span><strong>美式发音:</strong> ${result.phonetics.us}</span>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">
-            <i class="bi bi-book"></i> 词义
-          </h5>
-          <ul class="definition-list">
-            ${result.definitions.map(def => `
-              <li class="definition-item">
-                <span class="part-of-speech">${def.partOfSpeech}</span>
-                ${def.meanings.map(meaning => `<div class="meaning">${meaning}</div>`).join('')}
-              </li>
-            `).join('')}
-          </ul>
-          
-          <h5 class="card-title">
-            <i class="bi bi-link-45deg"></i> 常见用法
-          </h5>
-          <div class="usages">
-            <ul>
-              ${result.usages.map(usage => `<li>${usage}</li>`).join('')}
-            </ul>
-          </div>
-          
-          <h5 class="card-title">
-            <i class="bi bi-chat-quote"></i> 例句
-          </h5>
-          ${result.examples.map((example, index) => `
-            <div class="example">
-              <div class="english">${index + 1}. ${example.english}</div>
-              <div class="translation">${example.chinese}</div>
-            </div>
-          `).join('')}
-          
-          <div class="etymology">
-            <h5 class="card-title mb-3">
-              <i class="bi bi-tree"></i> 词源
-            </h5>
-            <p>${result.etymology}</p>
-          </div>
-          
-          <div class="tips">
-            <h5 class="card-title mb-3">
-              <i class="bi bi-lightbulb"></i> 记忆技巧
-            </h5>
-            <p>${result.tips}</p>
+  showLoading() {
+    this.loadingIndicator.classList.remove('d-none');
+    this.resultContainer.classList.add('d-none');
+    this.analyzeBtn.disabled = true;
+    this.analyzeBtn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+  }
+
+  hideLoading() {
+    this.loadingIndicator.classList.add('d-none');
+    this.analyzeBtn.disabled = false;
+    this.analyzeBtn.innerHTML = '<i class="bi bi-search"></i>';
+  }
+
+  showResult(content, mode) {
+    // 显示结果头部
+    this.resultContainer.innerHTML = `
+      <div class="result-header">
+        <h3>${mode === 'word' ? '📚 单词分析结果' : '📝 句子解析结果'}</h3>
+        <div class="result-actions">
+          <div class="action-group">
+            <button class="action-btn" onclick="analyzer.copyResult()" title="复制结果">
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="action-btn" onclick="analyzer.clearResult()" title="清除结果">
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
         </div>
       </div>
+      <div class="analysis-content animate__animated animate__fadeIn" id="exportContent">
+        <!-- 结果将在这里渲染 -->
+      </div>
     `;
-    
-    resultContainer.innerHTML = html;
+
+    const analysisContent = this.resultContainer.querySelector('.analysis-content');
+
+    if (mode === 'word') {
+      // 单词模式：直接渲染HTML
+      const cleanHtml = DOMPurify.sanitize(content);
+      analysisContent.innerHTML = cleanHtml;
+    } else {
+      // 句子模式：解析JSON并渲染
+      try {
+        const result = JSON.parse(content);
+        this.renderSentenceResult(result, analysisContent);
+      } catch (error) {
+        console.error('JSON解析错误:', error);
+        this.showError('结果解析失败，请重试');
+        return;
+      }
+    }
+
+    this.resultContainer.classList.remove('d-none');
+
+    // 滚动到结果区域
+    this.resultContainer.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
 
-  // 渲染句子分析结果
-  function renderSentenceResult(result) {
+  // 渲染句子分析结果 - 完全参考exampleproject
+  renderSentenceResult(result, container) {
     const html = `
       <div class="sentence-analysis animate__animated animate__fadeIn">
         <div class="original-sentence">
@@ -186,10 +133,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="structure">
           <h5 class="section-title">句子结构</h5>
           <div class="structure-type"><strong>类型：</strong> ${result.structure.type}</div>
-          <div class="structure-explanation mt-2">${result.structure.explanation}</div>
+          <div class="structure-explanation">${result.structure.explanation}</div>
         </div>
-        
-        <div class="components p-3">
+
+        <div class="components">
           <h5 class="section-title">句子成分</h5>
           ${result.components.map(comp => `
             <div class="component">
@@ -199,8 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           `).join('')}
         </div>
-        
-        <div class="key-phrases p-3">
+
+        <div class="key-phrases">
           <h5 class="section-title">关键词汇与短语</h5>
           ${result.keyPhrases.map(phrase => `
             <div class="key-phrase">
@@ -210,8 +157,8 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           `).join('')}
         </div>
-        
-        <div class="grammar-points p-3">
+
+        <div class="grammar-points">
           <h5 class="section-title">语法分析</h5>
           ${result.grammar.map(point => `
             <div class="grammar-point">
@@ -222,38 +169,146 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       </div>
     `;
-    
-    resultContainer.innerHTML = html;
+
+    container.innerHTML = html;
   }
 
-  // 显示提示消息
-  function showToast(message, type = 'info') {
-    const toastContainer = document.createElement('div');
-    toastContainer.className = `toast-container position-fixed bottom-0 end-0 p-3`;
-    
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-white bg-${type} border-0`;
-    toast.setAttribute('role', 'alert');
-    toast.setAttribute('aria-live', 'assertive');
-    toast.setAttribute('aria-atomic', 'true');
-    
-    toast.innerHTML = `
-      <div class="d-flex">
-        <div class="toast-body">
-          ${message}
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="关闭"></button>
+
+
+  showError(message) {
+    this.resultContainer.innerHTML = `
+      <div class="error-message">
+        <div class="error-icon">⚠️</div>
+        <h3>分析失败</h3>
+        <p>${message}</p>
+        <button class="retry-btn" onclick="analyzer.clearResult()">
+          重试
+        </button>
       </div>
     `;
-    
-    toastContainer.appendChild(toast);
-    document.body.appendChild(toastContainer);
-    
-    const bsToast = new bootstrap.Toast(toast);
-    bsToast.show();
-    
-    toast.addEventListener('hidden.bs.toast', () => {
-      document.body.removeChild(toastContainer);
-    });
+    this.resultContainer.classList.remove('d-none');
   }
-}); 
+
+  copyResult() {
+    const analysisContent = this.resultContainer.querySelector('.analysis-content');
+    if (analysisContent) {
+      const text = analysisContent.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        this.showToast('结果已复制到剪贴板');
+      }).catch(() => {
+        this.showToast('复制失败，请手动选择复制');
+      });
+    }
+  }
+
+  clearResult() {
+    this.resultContainer.classList.add('d-none');
+    this.textInput.focus();
+  }
+
+
+
+  showToast(message) {
+    // 创建简单的toast提示
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      z-index: 1001;
+      font-size: 0.875rem;
+      font-weight: 500;
+    `;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 300);
+    }, 3000);
+  }
+
+
+
+
+
+
+
+
+}
+
+// 添加动画样式
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+
+  .toast {
+    animation: slideIn 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .result-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .result-actions {
+      justify-content: center;
+    }
+  }
+`;
+document.head.appendChild(style);
+
+// 检查依赖库加载状态
+function checkLibraries() {
+  const libraries = {
+    'html2canvas': typeof html2canvas !== 'undefined',
+    'jsPDF': typeof window.jspdf !== 'undefined',
+    'DOMPurify': typeof DOMPurify !== 'undefined',
+    'axios': typeof axios !== 'undefined'
+  };
+
+  console.log('📚 依赖库加载状态:', libraries);
+
+  const allLoaded = Object.values(libraries).every(loaded => loaded);
+  if (!allLoaded) {
+    console.warn('⚠️ 部分依赖库未加载，导出功能可能不可用');
+  }
+
+  return allLoaded;
+}
+
+// 初始化应用
+const analyzer = new EnglishAnalyzer();
+
+// 页面加载完成后的初始化
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 AI英语分析程序已启动');
+  console.log('🎨 使用现代青绿色配色方案');
+  console.log('📝 支持Markdown格式输出');
+
+  // 检查依赖库
+  setTimeout(() => {
+    checkLibraries();
+  }, 1000);
+});
