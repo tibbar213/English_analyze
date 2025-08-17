@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const loadingIndicator = document.getElementById('loadingIndicator');
   const resultContainer = document.getElementById('resultContainer');
   const saveSettingsBtn = document.getElementById('saveSettings');
+  const resultActions = document.getElementById('resultActions');
+  const exportBtn = document.getElementById('exportBtn');
 
   // 加载配置
   loadConfig();
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (e.key === 'Enter') analyze();
   });
   saveSettingsBtn.addEventListener('click', saveConfig);
+  exportBtn.addEventListener('click', exportResult);
 
   // 提示模板
   function wordPrompt(word) {
@@ -143,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 显示加载指示器
     loadingIndicator.classList.remove('d-none');
     resultContainer.classList.add('d-none');
+    resultActions.classList.add('d-none');
 
     try {
       const response = await fetch(`${apiEndpoint}/chat/completions`, {
@@ -196,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         resultContainer.classList.remove('d-none');
+        resultActions.classList.remove('d-none');
         resultContainer.scrollIntoView({ behavior: 'smooth' });
       } catch (parseError) {
         showToast('解析结果失败: ' + parseError.message, 'error');
@@ -205,6 +210,20 @@ document.addEventListener('DOMContentLoaded', function() {
     } finally {
       loadingIndicator.classList.add('d-none');
     }
+  }
+
+  // 导出分析结果为图片
+  function exportResult() {
+    html2canvas(resultContainer, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'analysis.png';
+      link.click();
+    });
   }
 
   // 渲染单词分析结果
